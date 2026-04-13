@@ -20,19 +20,24 @@
       <!-- ============================================
            LOGIN VIEW
            ============================================ -->
-      <section id="loginView" class="card view active">
-        <div class="section-header">
-          <h2 data-i18n="loginTitle">تسجيل الدخول</h2>
-          <p data-i18n="loginHelp">أدخل كلمة المرور الخاصة بك للمتابعة</p>
+      <section id="loginView" class="view active login-view">
+        <canvas id="shaderCanvas" class="shader-canvas"></canvas>
+        <div class="login-container">
+          <div class="card login-card">
+            <div class="section-header">
+              <h2 data-i18n="loginTitle">تسجيل الدخول</h2>
+              <p data-i18n="loginHelp">أدخل كلمة المرور الخاصة بك للمتابعة</p>
+            </div>
+            <form id="loginForm" class="stack gap-md">
+              <label>
+                <span data-i18n="password">كلمة المرور</span>
+                <input id="passwordInput" name="password" type="password" autocomplete="current-password" required />
+              </label>
+              <button id="loginBtn" type="submit" class="primary-btn" data-i18n="login">دخول</button>
+              <p id="loginMessage" class="message"></p>
+            </form>
+          </div>
         </div>
-        <form id="loginForm" class="stack gap-md">
-          <label>
-            <span data-i18n="password">كلمة المرور</span>
-            <input id="passwordInput" name="password" type="password" autocomplete="current-password" required />
-          </label>
-          <button id="loginBtn" type="submit" class="primary-btn" data-i18n="login">دخول</button>
-          <p id="loginMessage" class="message"></p>
-        </form>
       </section>
 
       <!-- ============================================
@@ -283,6 +288,7 @@
   </div>
 
   <script src="./config.js"></script>
+  <script src="./shader-bg.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
