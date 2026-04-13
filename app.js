@@ -88,6 +88,11 @@ function bindEvents() {
   els.openAddDriverModal.addEventListener('click', () => openDriverModal());
   els.openAddEmployeeModal.addEventListener('click', () => openEmployeeModal());
   els.closeModalBtn.addEventListener('click', closeModal);
+  
+  // Ensure tab buttons work correctly
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchAdminTab(btn.dataset.tab, btn));
+  });
   document.querySelectorAll('.payment-btn').forEach(btn => btn.addEventListener('click', () => setPayment(btn.dataset.payment, btn)));
   document.querySelectorAll('.quick-btn').forEach(btn => btn.addEventListener('click', () => {
     const amount = Number(btn.dataset.amount || 0);
@@ -430,6 +435,11 @@ function switchAdminTab(tabId, button) {
   button.classList.add('active');
   document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
   document.getElementById(tabId).classList.remove('hidden');
+  
+  // Re-render tables to ensure data is visible when switching tabs
+  if (tabId === 'driversTab') renderDriversTable();
+  if (tabId === 'employeesTab') renderEmployeesTable();
+  if (tabId === 'entriesTab') renderDashboard();
 }
 
 function openDriverModal(item = null) {
