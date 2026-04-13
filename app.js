@@ -88,11 +88,6 @@ function bindEvents() {
   els.openAddDriverModal.addEventListener('click', () => openDriverModal());
   els.openAddEmployeeModal.addEventListener('click', () => openEmployeeModal());
   els.closeModalBtn.addEventListener('click', closeModal);
-  
-  // Ensure tab buttons work correctly
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => switchAdminTab(btn.dataset.tab, btn));
-  });
   document.querySelectorAll('.payment-btn').forEach(btn => btn.addEventListener('click', () => setPayment(btn.dataset.payment, btn)));
   document.querySelectorAll('.quick-btn').forEach(btn => btn.addEventListener('click', () => {
     const amount = Number(btn.dataset.amount || 0);
