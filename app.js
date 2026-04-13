@@ -73,6 +73,11 @@ function cacheDom() {
 
 function bindEvents() {
   els.langToggle.addEventListener('click', toggleLanguage);
+  document.getElementById('togglePassword')?.addEventListener('click', function() {
+    const type = els.passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    els.passwordInput.setAttribute('type', type);
+    this.textContent = type === 'password' ? '👁️' : '🔒';
+  });
   els.loginForm.addEventListener('submit', onLogin);
   els.addEntryBtn.addEventListener('click', addDraftEntry);
   els.submitEntriesBtn.addEventListener('click', submitDraftEntries);

@@ -914,3 +914,122 @@ tbody tr:hover {
     padding: 16px;
   }
 }
+
+/* ============================================
+   MOBILE-FIRST UI IMPROVEMENTS (UI/UX FIXES)
+   ============================================ */
+
+/* 1. Login Improvements */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-password {
+  position: absolute;
+  left: 12px; /* For RTL */
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  z-index: 5;
+}
+
+[dir="ltr"] .toggle-password {
+  left: auto;
+  right: 12px;
+}
+
+/* 2. Employee Grid Improvements for Mobile */
+.employee-grid {
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.employee-card {
+  padding: 18px 10px !important; /* Larger touch area */
+  font-size: 0.9rem !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+}
+
+/* 3. Payment Buttons for Mobile */
+.payment-buttons {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 8px !important;
+}
+
+.payment-btn {
+  min-width: unset !important;
+  padding: 16px 8px !important;
+}
+
+/* 4. Entries Card List (Better than Tables on Mobile) */
+.entry-item-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.entry-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.entry-name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.entry-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.entry-amount {
+  font-weight: 800;
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+/* 5. General Mobile Tweaks */
+@media (max-width: 480px) {
+  .topbar h1 {
+    font-size: 1.4rem;
+  }
+  
+  .card {
+    padding: 16px;
+  }
+  
+  .amount-input {
+    font-size: 1.5rem !important;
+  }
+  
+  .primary-btn, .secondary-btn {
+    padding: 16px 18px; /* Larger touch targets */
+  }
+}
+
+/* 6. Admin Table Responsiveness */
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+}
+
+table {
+  min-width: 600px; /* Force scroll on small screens */
+}

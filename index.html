@@ -31,7 +31,10 @@
             <form id="loginForm" class="stack gap-md">
               <label>
                 <span data-i18n="password">كلمة المرور</span>
-                <input id="passwordInput" name="password" type="password" autocomplete="current-password" required />
+                <div class="password-wrapper">
+                  <input id="passwordInput" name="password" type="password" autocomplete="current-password" required />
+                  <button type="button" id="togglePassword" class="toggle-password">👁️</button>
+                </div>
               </label>
               <button id="loginBtn" type="submit" class="primary-btn" data-i18n="login">دخول</button>
               <p id="loginMessage" class="message"></p>
