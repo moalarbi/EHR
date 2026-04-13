@@ -2,6 +2,7 @@ const state = {
   lang: 'ar',
   user: null,
   currentPayment: '',
+  currentEmployee: '',
   draftEntries: [],
   employees: [],
   drivers: [],
@@ -58,8 +59,8 @@ function cacheDom() {
     loginView: document.getElementById('loginView'), driverView: document.getElementById('driverView'), adminView: document.getElementById('adminView'),
     loginForm: document.getElementById('loginForm'), passwordInput: document.getElementById('passwordInput'), loginBtn: document.getElementById('loginBtn'), loginMessage: document.getElementById('loginMessage'),
     langToggle: document.getElementById('langToggle'), driverNameText: document.getElementById('driverNameText'), entryDate: document.getElementById('entryDate'),
-    employeeSelect: document.getElementById('employeeSelect'), amountInput: document.getElementById('amountInput'), addEntryBtn: document.getElementById('addEntryBtn'), driverMessage: document.getElementById('driverMessage'),
-    entryTableBody: document.getElementById('entryTableBody'), liveTotal: document.getElementById('liveTotal'), submitEntriesBtn: document.getElementById('submitEntriesBtn'), clearEntriesBtn: document.getElementById('clearEntriesBtn'),
+    employeeGrid: document.getElementById('employeeGrid'), amountInput: document.getElementById('amountInput'), addEntryBtn: document.getElementById('addEntryBtn'), driverMessage: document.getElementById('driverMessage'),
+    entriesCardList: document.getElementById('entriesCardList'), liveTotal: document.getElementById('liveTotal'), submitEntriesBtn: document.getElementById('submitEntriesBtn'), clearEntriesBtn: document.getElementById('clearEntriesBtn'),
     logoutDriverBtn: document.getElementById('logoutDriverBtn'), logoutAdminBtn: document.getElementById('logoutAdminBtn'),
     adminFromDate: document.getElementById('adminFromDate'), adminToDate: document.getElementById('adminToDate'), adminDriverFilter: document.getElementById('adminDriverFilter'),
     adminEmployeeFilter: document.getElementById('adminEmployeeFilter'), refreshDashboardBtn: document.getElementById('refreshDashboardBtn'), adminMessage: document.getElementById('adminMessage'),
@@ -149,6 +150,7 @@ async function bootDriver() {
   els.driverNameText.textContent = state.user.driverName || '-';
   state.draftEntries = [];
   state.currentPayment = '';
+  state.currentEmployee = '';
   highlightPaymentButton();
   renderDraftEntries();
   if (!state.employees.length) {
@@ -192,14 +194,24 @@ function logout() {
 }
 
 function renderEmployees() {
-  const current = els.employeeSelect.value;
-  els.employeeSelect.innerHTML = `<option value="">${t('chooseEmployee')}</option>`;
-  state.employees.filter(e => e.status === 'active').forEach(item => {
-    const option = document.createElement('option');
-    option.value = item.name;
-    option.textContent = item.name;
-    if (item.name === current) option.selected = true;
-    els.employeeSelect.appendChild(option);
+  els.employeeGrid.innerHTML = '';
+  const activeEmployees = state.employees.filter(e => e.status === 'active');
+  
+  if (activeEmployees.length === 0) {
+    els.employeeGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-secondary);">${t('noEntries')}</p>`;
+    return;
+  }
+  
+  activeEmployees.forEach(item => {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = `employee-card ${state.currentEmployee === item.name ? 'active' : ''}`;
+    card.textContent = item.name;
+    card.addEventListener('click', () => {
+      state.currentEmployee = item.name;
+      renderEmployees();
+    });
+    els.employeeGrid.appendChild(card);
   });
 }
 
@@ -219,7 +231,7 @@ function highlightPaymentButton(activeButton) {
 
 function addDraftEntry() {
   setMessage(els.driverMessage, '');
-  const employee = els.employeeSelect.value;
+  const employee = state.currentEmployee;
   const payment = state.currentPayment;
   const amount = Number(els.amountInput.value);
   if (!employee) return setMessage(els.driverMessage, t('selectEmployeeError'));
@@ -233,23 +245,33 @@ function addDraftEntry() {
 }
 
 function renderDraftEntries() {
-  els.entryTableBody.innerHTML = '';
+  els.entriesCardList.innerHTML = '';
   if (!state.draftEntries.length) {
-    const row = document.createElement('tr');
-    row.innerHTML = `<td colspan="4">${t('noEntries')}</td>`;
-    els.entryTableBody.appendChild(row);
+    const emptyMsg = document.createElement('div');
+    emptyMsg.style.gridColumn = '1/-1';
+    emptyMsg.style.textAlign = 'center';
+    emptyMsg.style.color = 'var(--text-secondary)';
+    emptyMsg.style.padding = '20px';
+    emptyMsg.textContent = t('noEntries');
+    els.entriesCardList.appendChild(emptyMsg);
   } else {
     state.draftEntries.forEach((entry, index) => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${entry.employee}</td>
-        <td>${entry.paymentMethod}</td>
-        <td>${formatMoney(entry.amount)}</td>
-        <td><button class="secondary-btn small-btn" data-remove-index="${index}">×</button></td>
+      const card = document.createElement('div');
+      card.className = 'entry-card';
+      const paymentIcon = entry.paymentMethod === 'Cash' ? '💵' : entry.paymentMethod === 'Card' ? '💳' : '📱';
+      card.innerHTML = `
+        <div class="entry-card-header">
+          <div class="entry-card-info">
+            <div class="entry-card-employee">${entry.employee}</div>
+            <div class="entry-card-payment"><span class="payment-icon">${paymentIcon}</span> ${entry.paymentMethod}</div>
+          </div>
+          <button type="button" class="entry-card-delete" data-remove-index="${index}">×</button>
+        </div>
+        <div class="entry-card-amount">${formatMoney(entry.amount)} SAR</div>
       `;
-      els.entryTableBody.appendChild(row);
+      els.entriesCardList.appendChild(card);
     });
-    els.entryTableBody.querySelectorAll('[data-remove-index]').forEach(btn => {
+    els.entriesCardList.querySelectorAll('[data-remove-index]').forEach(btn => {
       btn.addEventListener('click', () => {
         state.draftEntries.splice(Number(btn.dataset.removeIndex), 1);
         renderDraftEntries();

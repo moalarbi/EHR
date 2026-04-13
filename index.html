@@ -17,6 +17,9 @@
     </header>
 
     <main>
+      <!-- ============================================
+           LOGIN VIEW
+           ============================================ -->
       <section id="loginView" class="card view active">
         <div class="section-header">
           <h2 data-i18n="loginTitle">تسجيل الدخول</h2>
@@ -32,98 +35,128 @@
         </form>
       </section>
 
+      <!-- ============================================
+           DRIVER DASHBOARD VIEW
+           ============================================ -->
       <section id="driverView" class="view hidden">
+        <!-- Header Card -->
         <div class="card">
           <div class="section-header inline-between">
             <div>
               <h2 data-i18n="driverDashboard">لوحة السائق</h2>
               <p><span data-i18n="driver">السائق</span>: <strong id="driverNameText">-</strong></p>
             </div>
-            <button id="logoutDriverBtn" class="secondary-btn" data-i18n="logout">خروج</button>
-          </div>
-
-          <div class="grid-two">
-            <label>
-              <span data-i18n="date">التاريخ</span>
-              <input id="entryDate" type="date" />
-            </label>
-
-            <label>
-              <span data-i18n="employee">اسم الموظف / الموظفة</span>
-              <select id="employeeSelect">
-                <option value="" data-i18n="chooseEmployee">اختر الموظف</option>
-              </select>
-            </label>
-          </div>
-
-          <div class="payment-group">
-            <span class="group-label" data-i18n="paymentMethod">طريقة الدفع</span>
-            <div class="payment-buttons">
-              <button type="button" class="payment-btn cash" data-payment="Cash">Cash</button>
-              <button type="button" class="payment-btn card" data-payment="Card">Card</button>
-              <button type="button" class="payment-btn app" data-payment="App">App</button>
-            </div>
-          </div>
-
-          <div class="grid-two">
-            <label>
-              <span data-i18n="amount">المبلغ</span>
-              <input id="amountInput" type="number" step="0.01" min="0" placeholder="0.00" />
-            </label>
-            <div>
-              <span class="group-label" data-i18n="quickAmounts">مبالغ سريعة</span>
-              <div class="quick-buttons">
-                <button type="button" class="quick-btn" data-amount="100">+100</button>
-                <button type="button" class="quick-btn" data-amount="150">+150</button>
-                <button type="button" class="quick-btn" data-amount="200">+200</button>
-                <button type="button" class="quick-btn" data-amount="300">+300</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="actions-row">
-            <button id="addEntryBtn" type="button" class="primary-btn" data-i18n="addSession">إضافة جلسة</button>
-            <p id="driverMessage" class="message"></p>
+            <button id="logoutDriverBtn" class="secondary-btn small-btn" data-i18n="logout">خروج</button>
           </div>
         </div>
 
+        <!-- Date Picker -->
+        <div class="card mt-lg">
+          <label>
+            <span data-i18n="date">التاريخ</span>
+            <input id="entryDate" type="date" />
+          </label>
+        </div>
+
+        <!-- Employee Selection - Card Grid -->
+        <div class="card mt-lg">
+          <div class="section-header">
+            <h3 data-i18n="employee">اختر الموظف</h3>
+          </div>
+          <div id="employeeGrid" class="employee-grid">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Payment Method - Icon Buttons -->
+        <div class="card mt-lg">
+          <div class="section-header">
+            <h3 data-i18n="paymentMethod">طريقة الدفع</h3>
+          </div>
+          <div class="payment-buttons">
+            <button type="button" class="payment-btn cash" data-payment="Cash">
+              <span class="payment-icon">💵</span>
+              <span class="payment-label">Cash</span>
+            </button>
+            <button type="button" class="payment-btn card" data-payment="Card">
+              <span class="payment-icon">💳</span>
+              <span class="payment-label">Card</span>
+            </button>
+            <button type="button" class="payment-btn app" data-payment="App">
+              <span class="payment-icon">📱</span>
+              <span class="payment-label">App</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Amount Input -->
+        <div class="card mt-lg">
+          <div class="section-header">
+            <h3 data-i18n="amount">المبلغ</h3>
+          </div>
+          <div class="amount-input-wrapper">
+            <input id="amountInput" type="number" step="0.01" min="0" placeholder="0.00" class="amount-input" />
+            <span class="amount-currency">SAR</span>
+          </div>
+        </div>
+
+        <!-- Quick Amounts -->
+        <div class="card mt-lg">
+          <div class="section-header">
+            <h3 data-i18n="quickAmounts">مبالغ سريعة</h3>
+          </div>
+          <div class="quick-buttons">
+            <button type="button" class="quick-btn" data-amount="100">+100</button>
+            <button type="button" class="quick-btn" data-amount="150">+150</button>
+            <button type="button" class="quick-btn" data-amount="200">+200</button>
+            <button type="button" class="quick-btn" data-amount="300">+300</button>
+          </div>
+        </div>
+
+        <!-- Add Entry Button -->
+        <div class="card mt-lg">
+          <button id="addEntryBtn" type="button" class="primary-btn full-width" data-i18n="addSession">إضافة جلسة</button>
+          <p id="driverMessage" class="message"></p>
+        </div>
+
+        <!-- Current Entries -->
         <div class="card mt-lg">
           <div class="section-header inline-between">
             <h3 data-i18n="currentEntries">العمليات الحالية</h3>
             <div class="total-pill"><span data-i18n="total">الإجمالي</span>: <strong id="liveTotal">0.00</strong> SAR</div>
           </div>
 
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th data-i18n="employee">الموظف</th>
-                  <th data-i18n="paymentMethod">الدفع</th>
-                  <th data-i18n="amount">المبلغ</th>
-                  <th data-i18n="action">إجراء</th>
-                </tr>
-              </thead>
-              <tbody id="entryTableBody"></tbody>
-            </table>
+          <div id="entriesCardList" class="entries-card-list">
+            <!-- Populated by JavaScript -->
           </div>
 
-          <div class="actions-row mt-md">
-            <button id="submitEntriesBtn" type="button" class="success-btn" data-i18n="submitAll">حفظ الكل</button>
+          <div class="actions-row mt-lg">
+            <button id="submitEntriesBtn" type="button" class="primary-btn" data-i18n="submitAll">حفظ الكل</button>
             <button id="clearEntriesBtn" type="button" class="secondary-btn" data-i18n="clearAll">مسح الكل</button>
           </div>
         </div>
       </section>
 
+      <!-- ============================================
+           ADMIN DASHBOARD VIEW
+           ============================================ -->
       <section id="adminView" class="view hidden">
+        <!-- Header -->
         <div class="card">
           <div class="section-header inline-between">
             <div>
               <h2 data-i18n="adminDashboard">لوحة الإدارة</h2>
               <p data-i18n="adminHelp">مراجعة الإيرادات وإدارة السائقين والموظفين</p>
             </div>
-            <button id="logoutAdminBtn" class="secondary-btn" data-i18n="logout">خروج</button>
+            <button id="logoutAdminBtn" class="secondary-btn small-btn" data-i18n="logout">خروج</button>
           </div>
+        </div>
 
+        <!-- Filters -->
+        <div class="card mt-lg">
+          <div class="section-header">
+            <h3>الفلاتر</h3>
+          </div>
           <div class="filters-grid">
             <label>
               <span data-i18n="fromDate">من تاريخ</span>
@@ -135,36 +168,53 @@
             </label>
             <label>
               <span data-i18n="driver">السائق</span>
-              <select id="adminDriverFilter"><option value="">All</option></select>
+              <select id="adminDriverFilter"><option value="">الكل</option></select>
             </label>
             <label>
               <span data-i18n="employee">الموظف</span>
-              <select id="adminEmployeeFilter"><option value="">All</option></select>
+              <select id="adminEmployeeFilter"><option value="">الكل</option></select>
             </label>
           </div>
-
           <div class="actions-row mt-md">
             <button id="refreshDashboardBtn" class="primary-btn" data-i18n="refresh">تحديث</button>
             <p id="adminMessage" class="message"></p>
           </div>
         </div>
 
+        <!-- Statistics Cards -->
         <div class="stats-grid mt-lg">
-          <div class="stat-card"><span data-i18n="totalRevenue">إجمالي الإيراد</span><strong id="statTotalRevenue">0.00</strong></div>
-          <div class="stat-card"><span data-i18n="totalSessions">عدد الجلسات</span><strong id="statTotalSessions">0</strong></div>
-          <div class="stat-card"><span>Cash</span><strong id="statCash">0.00</strong></div>
-          <div class="stat-card"><span>Card</span><strong id="statCard">0.00</strong></div>
-          <div class="stat-card"><span>App</span><strong id="statApp">0.00</strong></div>
+          <div class="stat-card">
+            <span data-i18n="totalRevenue">إجمالي الإيراد</span>
+            <strong id="statTotalRevenue">0.00</strong>
+          </div>
+          <div class="stat-card">
+            <span data-i18n="totalSessions">عدد الجلسات</span>
+            <strong id="statTotalSessions">0</strong>
+          </div>
+          <div class="stat-card">
+            <span>💵 Cash</span>
+            <strong id="statCash">0.00</strong>
+          </div>
+          <div class="stat-card">
+            <span>💳 Card</span>
+            <strong id="statCard">0.00</strong>
+          </div>
+          <div class="stat-card">
+            <span>📱 App</span>
+            <strong id="statApp">0.00</strong>
+          </div>
         </div>
 
+        <!-- Tabs -->
         <div class="admin-tabs mt-lg">
           <button class="tab-btn active" data-tab="entriesTab" data-i18n="entries">الإيرادات</button>
           <button class="tab-btn" data-tab="driversTab" data-i18n="drivers">السائقين</button>
           <button class="tab-btn" data-tab="employeesTab" data-i18n="employees">الموظفين</button>
         </div>
 
+        <!-- Entries Tab -->
         <div id="entriesTab" class="tab-panel active">
-          <div class="card mt-md">
+          <div class="card mt-lg">
             <div class="section-header"><h3 data-i18n="latestEntries">آخر العمليات</h3></div>
             <div class="table-wrap">
               <table>
@@ -184,8 +234,9 @@
           </div>
         </div>
 
+        <!-- Drivers Tab -->
         <div id="driversTab" class="tab-panel hidden">
-          <div class="card mt-md">
+          <div class="card mt-lg">
             <div class="section-header inline-between">
               <h3 data-i18n="manageDrivers">إدارة السائقين</h3>
               <button id="openAddDriverModal" class="primary-btn small-btn" data-i18n="addDriver">إضافة سائق</button>
@@ -206,8 +257,9 @@
           </div>
         </div>
 
+        <!-- Employees Tab -->
         <div id="employeesTab" class="tab-panel hidden">
-          <div class="card mt-md">
+          <div class="card mt-lg">
             <div class="section-header inline-between">
               <h3 data-i18n="manageEmployees">إدارة الموظفين</h3>
               <button id="openAddEmployeeModal" class="primary-btn small-btn" data-i18n="addEmployee">إضافة موظف</button>
@@ -230,6 +282,7 @@
     </main>
   </div>
 
+  <!-- Modal -->
   <div id="modalOverlay" class="modal-overlay hidden">
     <div class="modal-card">
       <div class="section-header inline-between">
