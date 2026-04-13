@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EHTIMAM Revenue System</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <h1 id="appTitle">نظام تسجيل الإيرادات اليومية</h1>
+        <p id="appSubtitle">EHTIMAM - Daily Revenue Recording System</p>
+      </div>
+      <button id="langToggle" class="secondary-btn small-btn">EN</button>
+    </header>
+
+    <main>
+      <section id="loginView" class="card view active">
+        <div class="section-header">
+          <h2 data-i18n="loginTitle">تسجيل الدخول</h2>
+          <p data-i18n="loginHelp">أدخل كلمة المرور الخاصة بك للمتابعة</p>
+        </div>
+        <form id="loginForm" class="stack gap-md">
+          <label>
+            <span data-i18n="password">كلمة المرور</span>
+            <input id="passwordInput" name="password" type="password" autocomplete="current-password" required />
+          </label>
+          <button id="loginBtn" type="submit" class="primary-btn" data-i18n="login">دخول</button>
+          <p id="loginMessage" class="message"></p>
+        </form>
+      </section>
+
+      <section id="driverView" class="view hidden">
+        <div class="card">
+          <div class="section-header inline-between">
+            <div>
+              <h2 data-i18n="driverDashboard">لوحة السائق</h2>
+              <p><span data-i18n="driver">السائق</span>: <strong id="driverNameText">-</strong></p>
+            </div>
+            <button id="logoutDriverBtn" class="secondary-btn" data-i18n="logout">خروج</button>
+          </div>
+
+          <div class="grid-two">
+            <label>
+              <span data-i18n="date">التاريخ</span>
+              <input id="entryDate" type="date" />
+            </label>
+
+            <label>
+              <span data-i18n="employee">اسم الموظف / الموظفة</span>
+              <select id="employeeSelect">
+                <option value="" data-i18n="chooseEmployee">اختر الموظف</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="payment-group">
+            <span class="group-label" data-i18n="paymentMethod">طريقة الدفع</span>
+            <div class="payment-buttons">
+              <button type="button" class="payment-btn cash" data-payment="Cash">Cash</button>
+              <button type="button" class="payment-btn card" data-payment="Card">Card</button>
+              <button type="button" class="payment-btn app" data-payment="App">App</button>
+            </div>
+          </div>
+
+          <div class="grid-two">
+            <label>
+              <span data-i18n="amount">المبلغ</span>
+              <input id="amountInput" type="number" step="0.01" min="0" placeholder="0.00" />
+            </label>
+            <div>
+              <span class="group-label" data-i18n="quickAmounts">مبالغ سريعة</span>
+              <div class="quick-buttons">
+                <button type="button" class="quick-btn" data-amount="100">+100</button>
+                <button type="button" class="quick-btn" data-amount="150">+150</button>
+                <button type="button" class="quick-btn" data-amount="200">+200</button>
+                <button type="button" class="quick-btn" data-amount="300">+300</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions-row">
+            <button id="addEntryBtn" type="button" class="primary-btn" data-i18n="addSession">إضافة جلسة</button>
+            <p id="driverMessage" class="message"></p>
+          </div>
+        </div>
+
+        <div class="card mt-lg">
+          <div class="section-header inline-between">
+            <h3 data-i18n="currentEntries">العمليات الحالية</h3>
+            <div class="total-pill"><span data-i18n="total">الإجمالي</span>: <strong id="liveTotal">0.00</strong> SAR</div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th data-i18n="employee">الموظف</th>
+                  <th data-i18n="paymentMethod">الدفع</th>
+                  <th data-i18n="amount">المبلغ</th>
+                  <th data-i18n="action">إجراء</th>
+                </tr>
+              </thead>
+              <tbody id="entryTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="actions-row mt-md">
+            <button id="submitEntriesBtn" type="button" class="success-btn" data-i18n="submitAll">حفظ الكل</button>
+            <button id="clearEntriesBtn" type="button" class="secondary-btn" data-i18n="clearAll">مسح الكل</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="adminView" class="view hidden">
+        <div class="card">
+          <div class="section-header inline-between">
+            <div>
+              <h2 data-i18n="adminDashboard">لوحة الإدارة</h2>
+              <p data-i18n="adminHelp">مراجعة الإيرادات وإدارة السائقين والموظفين</p>
+            </div>
+            <button id="logoutAdminBtn" class="secondary-btn" data-i18n="logout">خروج</button>
+          </div>
+
+          <div class="filters-grid">
+            <label>
+              <span data-i18n="fromDate">من تاريخ</span>
+              <input id="adminFromDate" type="date" />
+            </label>
+            <label>
+              <span data-i18n="toDate">إلى تاريخ</span>
+              <input id="adminToDate" type="date" />
+            </label>
+            <label>
+              <span data-i18n="driver">السائق</span>
+              <select id="adminDriverFilter"><option value="">All</option></select>
+            </label>
+            <label>
+              <span data-i18n="employee">الموظف</span>
+              <select id="adminEmployeeFilter"><option value="">All</option></select>
+            </label>
+          </div>
+
+          <div class="actions-row mt-md">
+            <button id="refreshDashboardBtn" class="primary-btn" data-i18n="refresh">تحديث</button>
+            <p id="adminMessage" class="message"></p>
+          </div>
+        </div>
+
+        <div class="stats-grid mt-lg">
+          <div class="stat-card"><span data-i18n="totalRevenue">إجمالي الإيراد</span><strong id="statTotalRevenue">0.00</strong></div>
+          <div class="stat-card"><span data-i18n="totalSessions">عدد الجلسات</span><strong id="statTotalSessions">0</strong></div>
+          <div class="stat-card"><span>Cash</span><strong id="statCash">0.00</strong></div>
+          <div class="stat-card"><span>Card</span><strong id="statCard">0.00</strong></div>
+          <div class="stat-card"><span>App</span><strong id="statApp">0.00</strong></div>
+        </div>
+
+        <div class="admin-tabs mt-lg">
+          <button class="tab-btn active" data-tab="entriesTab" data-i18n="entries">الإيرادات</button>
+          <button class="tab-btn" data-tab="driversTab" data-i18n="drivers">السائقين</button>
+          <button class="tab-btn" data-tab="employeesTab" data-i18n="employees">الموظفين</button>
+        </div>
+
+        <div id="entriesTab" class="tab-panel active">
+          <div class="card mt-md">
+            <div class="section-header"><h3 data-i18n="latestEntries">آخر العمليات</h3></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-i18n="date">التاريخ</th>
+                    <th data-i18n="driver">السائق</th>
+                    <th data-i18n="employee">الموظف</th>
+                    <th data-i18n="paymentMethod">الدفع</th>
+                    <th data-i18n="amount">المبلغ</th>
+                    <th data-i18n="timestamp">وقت الإدخال</th>
+                  </tr>
+                </thead>
+                <tbody id="adminEntriesBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="driversTab" class="tab-panel hidden">
+          <div class="card mt-md">
+            <div class="section-header inline-between">
+              <h3 data-i18n="manageDrivers">إدارة السائقين</h3>
+              <button id="openAddDriverModal" class="primary-btn small-btn" data-i18n="addDriver">إضافة سائق</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-i18n="driver">السائق</th>
+                    <th data-i18n="password">كلمة المرور</th>
+                    <th data-i18n="status">الحالة</th>
+                    <th data-i18n="action">إجراء</th>
+                  </tr>
+                </thead>
+                <tbody id="driversBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="employeesTab" class="tab-panel hidden">
+          <div class="card mt-md">
+            <div class="section-header inline-between">
+              <h3 data-i18n="manageEmployees">إدارة الموظفين</h3>
+              <button id="openAddEmployeeModal" class="primary-btn small-btn" data-i18n="addEmployee">إضافة موظف</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-i18n="employee">الموظف</th>
+                    <th data-i18n="status">الحالة</th>
+                    <th data-i18n="action">إجراء</th>
+                  </tr>
+                </thead>
+                <tbody id="employeesBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modalOverlay" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="section-header inline-between">
+        <h3 id="modalTitle">Modal</h3>
+        <button id="closeModalBtn" class="secondary-btn small-btn">✕</button>
+      </div>
+      <form id="modalForm" class="stack gap-md"></form>
+    </div>
+  </div>
+
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
