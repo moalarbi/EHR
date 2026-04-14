@@ -172,6 +172,12 @@ async function bootAdmin() {
     state.employees = employeesResult.items || [];
   }
   await loadDashboard();
+  
+  // تفعيل تبويب الإيرادات تلقائياً عند الدخول لضمان ظهور المحتوى
+  const entriesTabBtn = document.querySelector('.tab-btn[data-tab="entriesTab"]');
+  if (entriesTabBtn) {
+    switchAdminTab('entriesTab', entriesTabBtn);
+  }
 }
 
 function switchView(view) {
@@ -426,12 +432,25 @@ function statusBadge(status) {
 }
 
 function switchAdminTab(tabId, button) {
+  // إزالة الفئة النشطة من جميع الأزرار
   document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  // إضافة الفئة النشطة للزر المختار
   button.classList.add('active');
-  document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
-  document.getElementById(tabId).classList.remove('hidden');
   
-  // Re-render tables to ensure data is visible when switching tabs
+  // إخفاء جميع اللوحات
+  document.querySelectorAll('.tab-panel').forEach(panel => {
+    panel.classList.add('hidden');
+    panel.classList.remove('active');
+  });
+  
+  // إظهار اللوحة المختارة
+  const activePanel = document.getElementById(tabId);
+  if (activePanel) {
+    activePanel.classList.remove('hidden');
+    activePanel.classList.add('active');
+  }
+  
+  // تحديث البيانات بناءً على التبويب المختار
   if (tabId === 'driversTab') renderDriversTable();
   if (tabId === 'employeesTab') renderEmployeesTable();
   if (tabId === 'entriesTab') renderDashboard();
