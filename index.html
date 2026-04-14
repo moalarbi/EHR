@@ -94,16 +94,28 @@
               <span class="payment-icon">📱</span>
               <span class="payment-label">App</span>
             </button>
+            <button type="button" class="payment-btn wallet" data-payment="Wallet">
+              <span class="payment-icon">👛</span>
+              <span class="payment-label">Wallet</span>
+            </button>
           </div>
         </div>
 
-        <!-- Amount Input -->
+        <!-- Amount & Tip Input -->
         <div class="card mt-lg">
           <div class="section-header">
             <h3 data-i18n="amount">المبلغ</h3>
           </div>
           <div class="amount-input-wrapper">
             <input id="amountInput" type="number" step="0.01" min="0" placeholder="0.00" class="amount-input" />
+            <span class="amount-currency">SAR</span>
+          </div>
+          
+          <div class="section-header mt-md">
+            <h3 data-i18n="tip">البقشيش (اختياري)</h3>
+          </div>
+          <div class="amount-input-wrapper">
+            <input id="tipInput" type="number" step="0.01" min="0" placeholder="0.00" class="amount-input" />
             <span class="amount-currency">SAR</span>
           </div>
         </div>
@@ -200,11 +212,20 @@
             <span>📱 App</span>
             <strong id="statApp">0.00</strong>
           </div>
+          <div class="stat-card">
+            <span>👛 Wallet</span>
+            <strong id="statWallet">0.00</strong>
+          </div>
+          <div class="stat-card">
+            <span>✨ Tip</span>
+            <strong id="statTip">0.00</strong>
+          </div>
         </div>
 
         <!-- Tabs -->
         <div class="admin-tabs mt-lg">
           <button class="tab-btn active" data-tab="entriesTab" data-i18n="entries">الإيرادات</button>
+          <button class="tab-btn" data-tab="monthlyTab" data-i18n="monthlyRevenue">إيراد الموظفين</button>
           <button class="tab-btn" data-tab="driversTab" data-i18n="drivers">السائقين</button>
           <button class="tab-btn" data-tab="employeesTab" data-i18n="employees">الموظفين</button>
         </div>
@@ -271,6 +292,32 @@
                   </tr>
                 </thead>
                 <tbody id="employeesBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly Revenue Tab -->
+        <div id="monthlyTab" class="tab-panel hidden">
+          <div class="card mt-lg">
+            <div class="section-header inline-between">
+              <h3 data-i18n="monthlyRevenue">إيراد الموظفين الشهري</h3>
+              <div class="month-selector">
+                <input type="month" id="monthlyFilter" />
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-i18n="employee">الموظف</th>
+                    <th data-i18n="sessions">الجلسات</th>
+                    <th data-i18n="serviceAmount">الإيراد</th>
+                    <th data-i18n="tipAmount">البقشيش</th>
+                    <th data-i18n="total">الإجمالي</th>
+                  </tr>
+                </thead>
+                <tbody id="monthlyBody"></tbody>
               </table>
             </div>
           </div>

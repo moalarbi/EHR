@@ -479,6 +479,13 @@ button:active {
   box-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
 }
 
+.payment-btn.active.wallet {
+  background: var(--accent-gold);
+  color: #000;
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 20px var(--accent-gold-glow);
+}
+
 /* Amount Input */
 .amount-input-wrapper {
   position: relative;
@@ -673,8 +680,8 @@ tbody tr:hover {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
 }
 
 .stat-card {

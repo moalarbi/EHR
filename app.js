@@ -24,7 +24,8 @@ const i18n = {
     selectEmployeeError: 'اختر الموظف أولًا', paymentError: 'اختر طريقة الدفع', amountError: 'أدخل مبلغًا صحيحًا أكبر من صفر',
     entryAdded: 'تمت إضافة الجلسة', noEntries: 'لا توجد عمليات حالية', submitSuccess: 'تم حفظ العمليات بنجاح',
     submitEmpty: 'أضف عملية واحدة على الأقل', dashboardLoaded: 'تم تحديث البيانات', add: 'إضافة', edit: 'تعديل', disable: 'إيقاف', enable: 'تفعيل',
-    driverName: 'اسم السائق', employeeName: 'اسم الموظف', generatedPassword: 'كلمة المرور', all: 'الكل'
+    driverName: 'اسم السائق', employeeName: 'اسم الموظف', generatedPassword: 'كلمة المرور', all: 'الكل',
+    tip: 'البقشيش', monthlyRevenue: 'إيراد الموظفين الشهري', sessions: 'الجلسات', serviceAmount: 'الإيراد', tipAmount: 'البقشيش'
   },
   en: {
     loginTitle: 'Login', loginHelp: 'Enter your password to continue', password: 'Password', login: 'Login',
@@ -40,7 +41,8 @@ const i18n = {
     selectEmployeeError: 'Select an employee first', paymentError: 'Select a payment method', amountError: 'Enter a valid amount greater than zero',
     entryAdded: 'Session added', noEntries: 'No current entries', submitSuccess: 'Entries saved successfully',
     submitEmpty: 'Add at least one entry', dashboardLoaded: 'Dashboard refreshed', add: 'Add', edit: 'Edit', disable: 'Disable', enable: 'Enable',
-    driverName: 'Driver Name', employeeName: 'Employee Name', generatedPassword: 'Password', all: 'All'
+    driverName: 'Driver Name', employeeName: 'Employee Name', generatedPassword: 'Password', all: 'All',
+    tip: 'Tip', monthlyRevenue: 'Monthly Employee Revenue', sessions: 'Sessions', serviceAmount: 'Revenue', tipAmount: 'Tip'
   }
 };
 
@@ -59,13 +61,15 @@ function cacheDom() {
     loginView: document.getElementById('loginView'), driverView: document.getElementById('driverView'), adminView: document.getElementById('adminView'),
     loginForm: document.getElementById('loginForm'), passwordInput: document.getElementById('passwordInput'), loginBtn: document.getElementById('loginBtn'), loginMessage: document.getElementById('loginMessage'),
     langToggle: document.getElementById('langToggle'), driverNameText: document.getElementById('driverNameText'), entryDate: document.getElementById('entryDate'),
-    employeeGrid: document.getElementById('employeeGrid'), amountInput: document.getElementById('amountInput'), addEntryBtn: document.getElementById('addEntryBtn'), driverMessage: document.getElementById('driverMessage'),
+    employeeGrid: document.getElementById('employeeGrid'), amountInput: document.getElementById('amountInput'), tipInput: document.getElementById('tipInput'), addEntryBtn: document.getElementById('addEntryBtn'), driverMessage: document.getElementById('driverMessage'),
     entriesCardList: document.getElementById('entriesCardList'), liveTotal: document.getElementById('liveTotal'), submitEntriesBtn: document.getElementById('submitEntriesBtn'), clearEntriesBtn: document.getElementById('clearEntriesBtn'),
     logoutDriverBtn: document.getElementById('logoutDriverBtn'), logoutAdminBtn: document.getElementById('logoutAdminBtn'),
     adminFromDate: document.getElementById('adminFromDate'), adminToDate: document.getElementById('adminToDate'), adminDriverFilter: document.getElementById('adminDriverFilter'),
     adminEmployeeFilter: document.getElementById('adminEmployeeFilter'), refreshDashboardBtn: document.getElementById('refreshDashboardBtn'), adminMessage: document.getElementById('adminMessage'),
     statTotalRevenue: document.getElementById('statTotalRevenue'), statTotalSessions: document.getElementById('statTotalSessions'), statCash: document.getElementById('statCash'), statCard: document.getElementById('statCard'), statApp: document.getElementById('statApp'),
+    statWallet: document.getElementById('statWallet'), statTip: document.getElementById('statTip'),
     adminEntriesBody: document.getElementById('adminEntriesBody'), driversBody: document.getElementById('driversBody'), employeesBody: document.getElementById('employeesBody'),
+    monthlyBody: document.getElementById('monthlyBody'), monthlyFilter: document.getElementById('monthlyFilter'),
     openAddDriverModal: document.getElementById('openAddDriverModal'), openAddEmployeeModal: document.getElementById('openAddEmployeeModal'),
     modalOverlay: document.getElementById('modalOverlay'), modalTitle: document.getElementById('modalTitle'), modalForm: document.getElementById('modalForm'), closeModalBtn: document.getElementById('closeModalBtn')
   });
@@ -85,6 +89,7 @@ function bindEvents() {
   els.logoutDriverBtn.addEventListener('click', logout);
   els.logoutAdminBtn.addEventListener('click', logout);
   els.refreshDashboardBtn.addEventListener('click', loadDashboard);
+  els.monthlyFilter.addEventListener('change', loadMonthlyRevenue);
   els.openAddDriverModal.addEventListener('click', () => openDriverModal());
   els.openAddEmployeeModal.addEventListener('click', () => openEmployeeModal());
   els.closeModalBtn.addEventListener('click', closeModal);
@@ -98,7 +103,9 @@ function bindEvents() {
 
 function setTodayDates() {
   const today = new Date().toISOString().slice(0, 10);
+  const currentMonth = new Date().toISOString().slice(0, 7);
   ['entryDate', 'adminFromDate', 'adminToDate'].forEach(id => document.getElementById(id).value = today);
+  if (els.monthlyFilter) els.monthlyFilter.value = currentMonth;
 }
 
 function toggleLanguage() {
@@ -244,13 +251,22 @@ function addDraftEntry() {
   setMessage(els.driverMessage, '');
   const employee = state.currentEmployee;
   const payment = state.currentPayment;
-  const amount = Number(els.amountInput.value);
+  const serviceAmount = Number(els.amountInput.value);
+  const tipAmount = Number(els.tipInput.value || 0);
   if (!employee) return setMessage(els.driverMessage, t('selectEmployeeError'));
   if (!payment) return setMessage(els.driverMessage, t('paymentError'));
-  if (!amount || amount <= 0) return setMessage(els.driverMessage, t('amountError'));
+  if (!serviceAmount || serviceAmount <= 0) return setMessage(els.driverMessage, t('amountError'));
 
-  state.draftEntries.push({ employee, paymentMethod: payment, amount: round2(amount) });
+  state.draftEntries.push({ 
+    employee, 
+    paymentMethod: payment, 
+    serviceAmount: round2(serviceAmount),
+    tipAmount: round2(tipAmount),
+    totalAmount: round2(serviceAmount + tipAmount),
+    amount: round2(serviceAmount + tipAmount) // الحفاظ على التوافقية مع الـ Backend القديم
+  });
   els.amountInput.value = '';
+  els.tipInput.value = '';
   setMessage(els.driverMessage, t('entryAdded'), 'success');
   renderDraftEntries();
 }
@@ -269,7 +285,8 @@ function renderDraftEntries() {
     state.draftEntries.forEach((entry, index) => {
       const card = document.createElement('div');
       card.className = 'entry-card';
-      const paymentIcon = entry.paymentMethod === 'Cash' ? '💵' : entry.paymentMethod === 'Card' ? '💳' : '📱';
+      const paymentIcon = entry.paymentMethod === 'Cash' ? '💵' : entry.paymentMethod === 'Card' ? '💳' : entry.paymentMethod === 'App' ? '📱' : '👛';
+      const tipText = entry.tipAmount > 0 ? ` (+${formatMoney(entry.tipAmount)} Tip)` : '';
       card.innerHTML = `
         <div class="entry-card-header">
           <div class="entry-card-info">
@@ -278,7 +295,7 @@ function renderDraftEntries() {
           </div>
           <button type="button" class="entry-card-delete" data-remove-index="${index}">×</button>
         </div>
-        <div class="entry-card-amount">${formatMoney(entry.amount)} SAR</div>
+        <div class="entry-card-amount">${formatMoney(entry.serviceAmount || entry.amount)}${tipText} = ${formatMoney(entry.totalAmount || entry.amount)} SAR</div>
       `;
       els.entriesCardList.appendChild(card);
     });
@@ -289,7 +306,7 @@ function renderDraftEntries() {
       });
     });
   }
-  els.liveTotal.textContent = formatMoney(state.draftEntries.reduce((sum, item) => sum + item.amount, 0));
+  els.liveTotal.textContent = formatMoney(state.draftEntries.reduce((sum, item) => sum + (item.totalAmount || item.amount), 0));
 }
 
 function clearDraftEntries() {
@@ -318,7 +335,6 @@ async function submitDraftEntries() {
     setLoading(els.submitEntriesBtn, false);
   }
 }
-
 async function loadDashboard() {
   setLoading(els.refreshDashboardBtn, true);
   setMessage(els.adminMessage, '');
@@ -333,6 +349,7 @@ async function loadDashboard() {
     state.dashboard = result;
     state.drivers = result.drivers || [];
     renderDashboard();
+    loadMonthlyRevenue(); // تحميل البيانات الشهرية
     setMessage(els.adminMessage, t('dashboardLoaded'), 'success');
   } catch (error) {
     setMessage(els.adminMessage, t('networkError'));
@@ -348,7 +365,34 @@ function renderDashboard() {
   els.statCash.textContent = formatMoney(summary.cash || 0);
   els.statCard.textContent = formatMoney(summary.card || 0);
   els.statApp.textContent = formatMoney(summary.app || 0);
+  els.statWallet.textContent = formatMoney(summary.wallet || 0);
+  els.statTip.textContent = formatMoney(summary.totalTip || 0);
+}
 
+async function loadMonthlyRevenue() {
+  if (!els.monthlyFilter.value) return;
+  try {
+    const result = await apiGet('getEmployeeMonthly', { month: els.monthlyFilter.value });
+    renderMonthlyRevenue(result.items || []);
+  } catch (error) {
+    console.error('Failed to load monthly revenue', error);
+  }
+}
+
+function renderMonthlyRevenue(items) {
+  els.monthlyBody.innerHTML = '';
+  items.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${item.name}</td>
+      <td>${item.sessions}</td>
+      <td>${formatMoney(item.serviceTotal)}</td>
+      <td>${formatMoney(item.tipTotal)}</td>
+      <td><strong>${formatMoney(item.total)}</strong></td>
+    `;
+    els.monthlyBody.appendChild(tr);
+  });
+}
   els.adminEntriesBody.innerHTML = '';
   (state.dashboard?.entries || []).forEach(item => {
     const row = document.createElement('tr');
