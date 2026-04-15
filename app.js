@@ -7,7 +7,9 @@ const state = {
   employees: [],
   drivers: [],
   dashboard: null,
+  monthlyEmployeeRevenue: null,
 };
+
 
 const i18n = {
   ar: {
@@ -18,10 +20,11 @@ const i18n = {
     clearAll: 'مسح الكل', adminDashboard: 'لوحة الإدارة', adminHelp: 'مراجعة الإيرادات وإدارة السائقين والموظفين',
     fromDate: 'من تاريخ', toDate: 'إلى تاريخ', refresh: 'تحديث', totalRevenue: 'إجمالي الإيراد', totalSessions: 'عدد الجلسات',
     entries: 'الإيرادات', drivers: 'السائقين', employees: 'الموظفين', latestEntries: 'آخر العمليات', timestamp: 'وقت الإدخال',
+    wallet: 'المحفظة', tipAmount: 'مبلغ الإكرامية', employeeMonthlyRevenue: 'الإيرادات الشهرية للموظفين', tips: 'الإكراميات', totalTips: 'إجمالي الإكراميات', sessions: 'الجلسات',
     manageDrivers: 'إدارة السائقين', addDriver: 'إضافة سائق', manageEmployees: 'إدارة الموظفين', addEmployee: 'إضافة موظف',
     status: 'الحالة', active: 'نشط', inactive: 'موقوف', save: 'حفظ', cancel: 'إلغاء',
     loginFailed: 'كلمة المرور غير صحيحة أو الحساب غير نشط', networkError: 'تعذر الاتصال بالخادم',
-    selectEmployeeError: 'اختر الموظف أولًا', paymentError: 'اختر طريقة الدفع', amountError: 'أدخل مبلغًا صحيحًا أكبر من صفر',
+    selectEmployeeError: 'اختر الموظف أولًا', paymentError: 'اختر طريقة الدفع', amountError: 'أدخل مبلغًا صحيحًا أكبر من صفر', tipAmountError: 'أدخل مبلغ إكرامية صحيحًا أو صفرًا',
     entryAdded: 'تمت إضافة الجلسة', noEntries: 'لا توجد عمليات حالية', submitSuccess: 'تم حفظ العمليات بنجاح',
     submitEmpty: 'أضف عملية واحدة على الأقل', dashboardLoaded: 'تم تحديث البيانات', add: 'إضافة', edit: 'تعديل', disable: 'إيقاف', enable: 'تفعيل',
     driverName: 'اسم السائق', employeeName: 'اسم الموظف', generatedPassword: 'كلمة المرور', all: 'الكل'
@@ -34,10 +37,11 @@ const i18n = {
     clearAll: 'Clear All', adminDashboard: 'Admin Dashboard', adminHelp: 'Review revenues and manage drivers and employees',
     fromDate: 'From Date', toDate: 'To Date', refresh: 'Refresh', totalRevenue: 'Total Revenue', totalSessions: 'Total Sessions',
     entries: 'Entries', drivers: 'Drivers', employees: 'Employees', latestEntries: 'Latest Entries', timestamp: 'Timestamp',
+    wallet: 'Wallet', tipAmount: 'Tip Amount', employeeMonthlyRevenue: 'Employee Monthly Revenue', tips: 'Tips', totalTips: 'Total Tips', sessions: 'Sessions',
     manageDrivers: 'Manage Drivers', addDriver: 'Add Driver', manageEmployees: 'Manage Employees', addEmployee: 'Add Employee',
     status: 'Status', active: 'Active', inactive: 'Inactive', save: 'Save', cancel: 'Cancel',
     loginFailed: 'Invalid password or inactive account', networkError: 'Unable to reach the server',
-    selectEmployeeError: 'Select an employee first', paymentError: 'Select a payment method', amountError: 'Enter a valid amount greater than zero',
+    selectEmployeeError: 'Select an employee first', paymentError: 'Select a payment method', amountError: 'Enter a valid amount greater than zero', tipAmountError: 'Enter a valid tip amount or zero',
     entryAdded: 'Session added', noEntries: 'No current entries', submitSuccess: 'Entries saved successfully',
     submitEmpty: 'Add at least one entry', dashboardLoaded: 'Dashboard refreshed', add: 'Add', edit: 'Edit', disable: 'Disable', enable: 'Enable',
     driverName: 'Driver Name', employeeName: 'Employee Name', generatedPassword: 'Password', all: 'All'
@@ -64,10 +68,15 @@ function cacheDom() {
     logoutDriverBtn: document.getElementById('logoutDriverBtn'), logoutAdminBtn: document.getElementById('logoutAdminBtn'),
     adminFromDate: document.getElementById('adminFromDate'), adminToDate: document.getElementById('adminToDate'), adminDriverFilter: document.getElementById('adminDriverFilter'),
     adminEmployeeFilter: document.getElementById('adminEmployeeFilter'), refreshDashboardBtn: document.getElementById('refreshDashboardBtn'), adminMessage: document.getElementById('adminMessage'),
-    statTotalRevenue: document.getElementById('statTotalRevenue'), statTotalSessions: document.getElementById('statTotalSessions'), statCash: document.getElementById('statCash'), statCard: document.getElementById('statCard'), statApp: document.getElementById('statApp'),
-    adminEntriesBody: document.getElementById('adminEntriesBody'), driversBody: document.getElementById('driversBody'), employeesBody: document.getElementById('employeesBody'),
+    statTotalRevenue: document.getElementById("statTotalRevenue"), statTotalSessions: document.getElementById("statTotalSessions"), statCash: document.getElementById("statCash"), statCard: document.getElementById("statCard"), statApp: document.getElementById("statApp"), statWallet: document.getElementById("statWallet"), statTotalTips: document.getElementById("statTotalTips"),
+    adminEntriesBody: document.getElementById("adminEntriesBody"), driversBody: document.getElementById("driversBody"), employeesBody: document.getElementById("employeesBody"), monthlyEmployeeRevenueBody: document.getElementById("monthlyEmployeeRevenueBody"),
     openAddDriverModal: document.getElementById('openAddDriverModal'), openAddEmployeeModal: document.getElementById('openAddEmployeeModal'),
-    modalOverlay: document.getElementById('modalOverlay'), modalTitle: document.getElementById('modalTitle'), modalForm: document.getElementById('modalForm'), closeModalBtn: document.getElementById('closeModalBtn')
+    modalOverlay: document.getElementById("modalOverlay"), modalTitle: document.getElementById("modalTitle"), modalForm: document.getElementById("modalForm"), closeModalBtn: document.getElementById("closeModalBtn"),
+    tipAmountInput: document.getElementById("tipAmountInput"),
+    monthlyRevenueMonthFilter: document.getElementById("monthlyRevenueMonthFilter"),
+    monthlyRevenueFromDateFilter: document.getElementById("monthlyRevenueFromDateFilter"),
+    monthlyRevenueToDateFilter: document.getElementById("monthlyRevenueToDateFilter"),
+    refreshMonthlyRevenueBtn: document.getElementById("refreshMonthlyRevenueBtn")
   });
 }
 
@@ -88,7 +97,8 @@ function bindEvents() {
   els.openAddDriverModal.addEventListener('click', () => openDriverModal());
   els.openAddEmployeeModal.addEventListener('click', () => openEmployeeModal());
   els.closeModalBtn.addEventListener('click', closeModal);
-  document.querySelectorAll('.payment-btn').forEach(btn => btn.addEventListener('click', () => setPayment(btn.dataset.payment, btn)));
+  document.querySelectorAll(".payment-btn").forEach(btn => btn.addEventListener("click", () => setPayment(btn.dataset.payment, btn)));
+  els.refreshMonthlyRevenueBtn.addEventListener("click", loadMonthlyEmployeeRevenue);
   document.querySelectorAll('.quick-btn').forEach(btn => btn.addEventListener('click', () => {
     const amount = Number(btn.dataset.amount || 0);
     els.amountInput.value = (Number(els.amountInput.value || 0) + amount).toFixed(2);
@@ -119,6 +129,10 @@ function applyLanguage() {
   const appSubtitle = document.getElementById('appSubtitle');
   appTitle.textContent = lang === 'ar' ? window.APP_CONFIG.APP_NAME_AR : window.APP_CONFIG.APP_NAME_EN;
   appSubtitle.textContent = 'EHTIMAM - ' + (lang === 'ar' ? 'Daily Revenue Recording System' : 'Daily Revenue Recording System');
+  // Update placeholder for tip amount input
+  if (els.tipAmountInput) {
+    els.tipAmountInput.placeholder = t('tipAmount');
+  }
   renderEmployees();
   renderDraftEntries();
   renderAdminOptions();
@@ -241,17 +255,21 @@ function highlightPaymentButton(activeButton) {
 }
 
 function addDraftEntry() {
-  setMessage(els.driverMessage, '');
+  setMessage(els.driverMessage, "");
   const employee = state.currentEmployee;
   const payment = state.currentPayment;
   const amount = Number(els.amountInput.value);
-  if (!employee) return setMessage(els.driverMessage, t('selectEmployeeError'));
-  if (!payment) return setMessage(els.driverMessage, t('paymentError'));
-  if (!amount || amount <= 0) return setMessage(els.driverMessage, t('amountError'));
+  const tipAmount = Number(els.tipAmountInput.value);
 
-  state.draftEntries.push({ employee, paymentMethod: payment, amount: round2(amount) });
-  els.amountInput.value = '';
-  setMessage(els.driverMessage, t('entryAdded'), 'success');
+  if (!employee) return setMessage(els.driverMessage, t("selectEmployeeError"));
+  if (!payment) return setMessage(els.driverMessage, t("paymentError"));
+  if (isNaN(amount) || amount <= 0) return setMessage(els.driverMessage, t("amountError"));
+  if (isNaN(tipAmount) || tipAmount < 0) return setMessage(els.driverMessage, t("tipAmountError")); // Assuming tipAmountError is added to i18n
+
+  state.draftEntries.push({ employee, paymentMethod: payment, amount: round2(amount), tipAmount: round2(tipAmount) });
+  els.amountInput.value = "";
+  els.tipAmountInput.value = "0.00"; // Reset tip amount after adding entry
+  setMessage(els.driverMessage, t("entryAdded"), "success");
   renderDraftEntries();
 }
 
@@ -269,16 +287,17 @@ function renderDraftEntries() {
     state.draftEntries.forEach((entry, index) => {
       const card = document.createElement('div');
       card.className = 'entry-card';
-      const paymentIcon = entry.paymentMethod === 'Cash' ? '💵' : entry.paymentMethod === 'Card' ? '💳' : '📱';
+      const paymentIcon = entry.paymentMethod === 'Cash' ? '💵' : entry.paymentMethod === 'Card' ? '💳' : entry.paymentMethod === 'App' ? '📱' : '💳'; // Added Wallet icon
       card.innerHTML = `
         <div class="entry-card-header">
           <div class="entry-card-info">
             <div class="entry-card-employee">${entry.employee}</div>
             <div class="entry-card-payment"><span class="payment-icon">${paymentIcon}</span> ${entry.paymentMethod}</div>
+            ${entry.tipAmount > 0 ? `<div class="entry-card-tip">+ ${formatMoney(entry.tipAmount)} ${t('tips')}</div>` : ''}
           </div>
           <button type="button" class="entry-card-delete" data-remove-index="${index}">×</button>
         </div>
-        <div class="entry-card-amount">${formatMoney(entry.amount)} SAR</div>
+        <div class="entry-card-amount">${formatMoney(entry.amount + entry.tipAmount)} SAR</div>
       `;
       els.entriesCardList.appendChild(card);
     });
@@ -289,7 +308,7 @@ function renderDraftEntries() {
       });
     });
   }
-  els.liveTotal.textContent = formatMoney(state.draftEntries.reduce((sum, item) => sum + item.amount, 0));
+  els.liveTotal.textContent = formatMoney(state.draftEntries.reduce((sum, item) => sum + item.amount + item.tipAmount, 0));
 }
 
 function clearDraftEntries() {
@@ -303,7 +322,7 @@ async function submitDraftEntries() {
   const payload = {
     date: els.entryDate.value,
     driver: state.user.driverName,
-    entries: state.draftEntries
+    entries: state.draftEntries.map(entry => ({...entry, amount: entry.amount, tipAmount: entry.tipAmount}))
   };
   setLoading(els.submitEntriesBtn, true);
   try {
@@ -317,6 +336,56 @@ async function submitDraftEntries() {
   } finally {
     setLoading(els.submitEntriesBtn, false);
   }
+}
+
+async function loadMonthlyEmployeeRevenue() {
+  setLoading(els.refreshMonthlyRevenueBtn, true);
+  try {
+    const monthYear = els.monthlyRevenueMonthFilter.value;
+    const fromDate = els.monthlyRevenueFromDateFilter.value;
+    const toDate = els.monthlyRevenueToDateFilter.value;
+
+    let params = {};
+    if (fromDate && toDate) {
+      params = { fromDate, toDate };
+    } else if (monthYear) {
+      const [year, month] = monthYear.split('-');
+      params = { month, year };
+    }
+
+    const result = await apiGet('getEmployeeMonthlyRevenue', params);
+    state.monthlyEmployeeRevenue = result.items || [];
+    renderMonthlyEmployeeRevenue();
+  } catch (error) {
+    console.error('Error loading monthly employee revenue:', error);
+    setMessage(els.adminMessage, t('networkError'));
+  } finally {
+    setLoading(els.refreshMonthlyRevenueBtn, false);
+  }
+}
+
+function renderMonthlyEmployeeRevenue() {
+  els.monthlyEmployeeRevenueBody.innerHTML = '';
+  if (!state.monthlyEmployeeRevenue.length) {
+    els.monthlyEmployeeRevenueBody.innerHTML = `<tr><td colspan="9" style="text-align: center;">${t('noEntries')}</td></tr>`;
+    return;
+  }
+
+  state.monthlyEmployeeRevenue.forEach(item => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${item.employee}</td>
+      <td>${item.sessions}</td>
+      <td>${formatMoney(item.revenue)}</td>
+      <td>${formatMoney(item.tips)}</td>
+      <td>${formatMoney(item.cash)}</td>
+      <td>${formatMoney(item.card)}</td>
+      <td>${formatMoney(item.app)}</td>
+      <td>${formatMoney(item.wallet)}</td>
+      <td>${formatMoney(item.total)}</td>
+    `;
+    els.monthlyEmployeeRevenueBody.appendChild(row);
+  });
 }
 
 async function loadDashboard() {
@@ -348,6 +417,8 @@ function renderDashboard() {
   els.statCash.textContent = formatMoney(summary.cash || 0);
   els.statCard.textContent = formatMoney(summary.card || 0);
   els.statApp.textContent = formatMoney(summary.app || 0);
+  els.statWallet.textContent = formatMoney(summary.wallet || 0);
+  els.statTotalTips.textContent = formatMoney(summary.totalTips || 0);
 
   els.adminEntriesBody.innerHTML = '';
   (state.dashboard?.entries || []).forEach(item => {
@@ -432,6 +503,16 @@ function statusBadge(status) {
 }
 
 function switchAdminTab(tabId, button) {
+  // Set default month/year for the new tab if not already set
+  if (tabId === 'monthlyEmployeeRevenueTab') {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    if (!els.monthlyRevenueMonthFilter.value) {
+      els.monthlyRevenueMonthFilter.value = `${year}-${month}`;
+    }
+  }
+
   // إزالة الفئة النشطة من جميع الأزرار
   document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
   // إضافة الفئة النشطة للزر المختار
@@ -454,6 +535,8 @@ function switchAdminTab(tabId, button) {
   if (tabId === 'driversTab') renderDriversTable();
   if (tabId === 'employeesTab') renderEmployeesTable();
   if (tabId === 'entriesTab') renderDashboard();
+  if (tabId === 'monthlyEmployeeRevenueTab') loadMonthlyEmployeeRevenue();
+}
 }
 
 function openDriverModal(item = null) {
