@@ -94,10 +94,23 @@
               <span class="payment-icon">📱</span>
               <span class="payment-label">App</span>
             </button>
+            <button type="button" class="payment-btn wallet" data-payment="Wallet">
+              <span class="payment-icon">💳</span>
+              <span class="payment-label" data-i18n="wallet">المحفظة</span>
+            </button>
           </div>
         </div>
 
         <!-- Amount Input -->
+        <div class="card mt-lg">
+          <div class="section-header">
+            <h3 data-i18n="tipAmount">مبلغ الإكرامية</h3>
+          </div>
+          <div class="amount-input-wrapper">
+            <input id="tipAmountInput" type="number" step="0.01" min="0" value="0.00" placeholder="0.00" class="amount-input" />
+            <span class="amount-currency">SAR</span>
+          </div>
+        </div>
         <div class="card mt-lg">
           <div class="section-header">
             <h3 data-i18n="amount">المبلغ</h3>
@@ -207,6 +220,7 @@
           <button class="tab-btn active" data-tab="entriesTab" data-i18n="entries">الإيرادات</button>
           <button class="tab-btn" data-tab="driversTab" data-i18n="drivers">السائقين</button>
           <button class="tab-btn" data-tab="employeesTab" data-i18n="employees">الموظفين</button>
+          <button class="tab-btn" data-tab="monthlyEmployeeRevenueTab" data-i18n="employeeMonthlyRevenue">الإيرادات الشهرية للموظفين</button>
         </div>
 
         <!-- Entries Tab -->
@@ -255,6 +269,48 @@
         </div>
 
         <!-- Employees Tab -->
+        <div id="monthlyEmployeeRevenueTab" class="tab-panel hidden">
+          <div class="card mt-lg">
+            <div class="section-header">
+              <h3 data-i18n="employeeMonthlyRevenue">الإيرادات الشهرية للموظفين</h3>
+            </div>
+            <div class="filters-grid">
+              <label>
+                <span>الشهر</span>
+                <input id="monthlyRevenueMonthFilter" type="month" />
+              </label>
+              <label>
+                <span data-i18n="fromDate">من تاريخ</span>
+                <input id="monthlyRevenueFromDateFilter" type="date" />
+              </label>
+              <label>
+                <span data-i18n="toDate">إلى تاريخ</span>
+                <input id="monthlyRevenueToDateFilter" type="date" />
+              </label>
+            </div>
+            <div class="actions-row mt-md">
+              <button id="refreshMonthlyRevenueBtn" class="primary-btn" data-i18n="refresh">تحديث</button>
+            </div>
+            <div class="table-wrap mt-lg">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-i18n="employee">الموظف</th>
+                    <th data-i18n="totalSessions">الجلسات</th>
+                    <th data-i18n="totalRevenue">الإيرادات</th>
+                    <th data-i18n="tips">الإكراميات</th>
+                    <th>💵 Cash</th>
+                    <th>💳 Card</th>
+                    <th>📱 App</th>
+                    <th>💳 Wallet</th>
+                    <th data-i18n="total">الإجمالي</th>
+                  </tr>
+                </thead>
+                <tbody id="monthlyEmployeeRevenueBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
         <div id="employeesTab" class="tab-panel hidden">
           <div class="card mt-lg">
             <div class="section-header inline-between">
