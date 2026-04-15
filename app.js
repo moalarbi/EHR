@@ -626,7 +626,13 @@ async function apiGet(action, params = {}) {
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) url.searchParams.set(key, value);
   });
-  const res = await fetch(url.toString());
+  
+  const res = await fetch(url.toString(), {
+    method: 'GET',
+    mode: 'cors',
+    redirect: 'follow'
+  });
+  
   const data = await res.json();
   if (!data.success) throw new Error(data.message || 'Request failed');
   return data;
@@ -636,9 +642,12 @@ async function apiPost(action, payload = {}) {
   const body = JSON.stringify({ action, payload });
   const res = await fetch(window.APP_CONFIG.API_URL, {
     method: 'POST',
+    mode: 'cors',
+    redirect: 'follow',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body
   });
+  
   const data = await res.json();
   if (!data.success) throw new Error(data.message || 'Request failed');
   return data;
